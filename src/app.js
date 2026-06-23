@@ -464,6 +464,21 @@ export function injectSharedLayouts() {
             </div>
 
             <div class="border-t border-gray-100 pt-5">
+              <p class="text-[10px] tracking-wider uppercase text-slate-400 font-black mb-2.5">এডমিন জোন (Admin Zone)</p>
+              <div class="pl-0.5">
+                <a href="/admin/index.html" class="flex items-center gap-2.5 px-3 py-2.5 bg-emerald-50 hover:bg-emerald-100/90 border border-emerald-200/80 text-emerald-800 rounded-xl transition duration-200 shadow-xs group">
+                  <div class="p-1.5 bg-emerald-600 rounded-lg text-white group-hover:scale-105 transition-transform flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  </div>
+                  <div class="text-left">
+                    <p class="font-black text-[12.5px] leading-tight text-emerald-950 font-sans">এডমিন কন্ট্রোল প্যানেল</p>
+                    <p class="text-[10px] font-medium text-emerald-650 leading-none mt-1 font-sans">অর্ডার, প্রোডাক্ট, হেডার-ফুটার ও সব সেটিংস</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-100 pt-5">
               <p class="text-xs text-gray-500 font-medium">হেল্পলাইন নম্বর: ${settings.phone || '01789-123456'}</p>
               <p class="text-[11px] text-gray-400 font-medium mt-1">সকাল ৯:০০ - রাত ১০:০০ প্রতিদিন</p>
             </div>
@@ -584,7 +599,7 @@ export function injectSharedLayouts() {
           </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 md:px-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p class="text-xs text-gray-500">${processedCopyright}</p>
+          <p class="text-xs text-gray-500">${processedCopyright} <span class="mx-1.5 text-gray-700">•</span> <a href="/admin/index.html" class="hover:text-emerald-400 transition font-medium underline decoration-dotted">অ্যাডমিন প্রবেশদ্বার (Admin Login)</a></p>
           <div class="flex items-center gap-4 ${settings.footerShowPayments === false ? 'hidden' : ''}">
             <span class="text-xs text-gray-500 select-none">Secure Payments via:</span>
             <!-- Logo flags -->

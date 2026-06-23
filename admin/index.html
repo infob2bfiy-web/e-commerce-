@@ -15,22 +15,23 @@
       background: #0f172a;
     }
     ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
+      background: #1e293b;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
+      background: #334155;
     }
     .custom-transition {
-      transition: all 0.2s ease-in-out;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     input, select, textarea {
-      transition: all 0.15s ease-in-out;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #10b981;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+      background-color: rgba(15, 23, 42, 0.8);
     }
     /* Toast slide-in */
     @keyframes slideIn {
@@ -38,14 +39,139 @@
       to { transform: translateY(0); opacity: 1; }
     }
     .toast-anim {
-      animation: slideIn 0.25s forwards;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     /* Zebra stripe and hover for list items */
+    .table-row-striped {
+      transition: background-color 0.15s ease, transform 0.1s ease;
+    }
     .table-row-striped:nth-child(even) {
-      background-color: rgba(30, 41, 59, 0.4);
+      background-color: rgba(30, 41, 59, 0.2);
     }
     .table-row-striped:hover {
-      background-color: rgba(51, 65, 85, 0.4);
+      background-color: rgba(51, 65, 85, 0.3);
+      transform: translateY(-0.5px);
+    }
+    /* Premium visual effects */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
+    }
+    .gradient-emerald-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(6, 78, 59, 0.2) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.12);
+    }
+    .glow-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border-radius: 9999px;
+      padding: 2px 10px;
+      font-size: 10px;
+    }
+    .glow-badge-pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.05);
+    }
+    .glow-badge-confirmed {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.05);
+    }
+    .glow-badge-shipped {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.05);
+    }
+    .glow-badge-cancelled {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.05);
+    }
+    /* Modern list visual lines */
+    .nav-indicator-active {
+      position: relative;
+    }
+    .nav-indicator-active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      height: 60%;
+      width: 4px;
+      background-color: #10b981;
+      border-radius: 0 4px 4px 0;
+    }
+    /* Ambient backdrop glow for login */
+    .login-glow-bg {
+      background-image: radial-gradient(circle at 50% 50%, #064e3b 0%, #0f172a 70%);
+    }
+    /* Premium glassmorphic override for standard cards */
+    .bg-\[\#1e293b\] {
+      background: rgba(30, 41, 59, 0.55) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3) !important;
+    }
+    /* Clean sidebar and mobile header */
+    #sidebar-panel {
+      background-color: #0b0f19 !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    header.bg-\[\#1e293b\] {
+      background-color: #0b0f19 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    /* Exclude textareas or special inputs if needed, and make generic inputs elegant */
+    input, select, textarea {
+      background-color: rgba(15, 23, 42, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: #f8fafc !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2) !important;
+      background-color: rgba(15, 23, 42, 0.85) !important;
+    }
+    /* Soften the dashboard background for luxurious depth */
+    html, body, #admin-workspace, #login-screen {
+      background-color: #090d16 !important;
+      background-image: radial-gradient(at top right, rgba(16, 185, 129, 0.12), transparent 600px),
+                        radial-gradient(at bottom left, rgba(6, 182, 212, 0.08), transparent 600px) !important;
+      background-attachment: fixed;
+      color: #f1f5f9 !important;
+    }
+    /* Robust high contrast text overrides to counter any injected style sheets */
+    #admin-workspace h1, 
+    #admin-workspace h2, 
+    #admin-workspace h3, 
+    #admin-workspace h4, 
+    #admin-workspace h5, 
+    #admin-workspace h6 {
+      color: #ffffff !important;
+    }
+    #admin-workspace p, 
+    #admin-workspace span:not(.glow-badge):not(.setting-sub-tab):not(#admin-workspace-status-indicator), 
+    #admin-workspace td, 
+    #admin-workspace th {
+      color: #e2e8f0 !important;
+    }
+    #admin-workspace label {
+      color: #94a3b8 !important;
+    }
+    /* Specific table styles */
+    th {
+      color: #94a3b8 !important;
+      font-weight: 700 !important;
     }
   </style>
 </head>
@@ -55,8 +181,8 @@
   <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 max-w-sm w-full"></div>
 
   <!-- ================= 1. LOGIN SCREEN (Full Screen Overlay) ================= -->
-  <div id="login-screen" class="fixed inset-0 bg-[#0f172a] flex items-center justify-center p-4 z-[9990]">
-    <div class="bg-[#1e293b] rounded-2xl border border-slate-800 p-8 w-full max-w-md shadow-2xl relative">
+  <div id="login-screen" class="fixed inset-0 login-glow-bg flex items-center justify-center p-4 z-[9990]">
+    <div class="glass-card rounded-3xl border border-emerald-500/10 p-8 w-full max-w-md shadow-2xl relative">
       <div class="flex flex-col items-center mb-6 text-center">
         <span class="text-4xl mb-2">🌿</span>
         <h2 class="text-2xl font-extrabold text-emerald-500 font-sans">অ্যাডমিন প্রবেশদ্বার</h2>
@@ -117,27 +243,27 @@
 
         <!-- Sidenav tabs navigation linking -->
         <nav class="p-4 space-y-1">
-          <button data-tab="dashboard" class="sidebar-tab active bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="dashboard" class="sidebar-tab active nav-indicator-active bg-slate-800/80 border border-emerald-500/10 text-emerald-400 font-bold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition shadow-sm shadow-emerald-950/20">
             <span class="text-base">📊</span>
             <span>Dashboard (ওভারভিউ)</span>
           </button>
-          <button data-tab="orders" class="sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="orders" class="sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent">
             <span class="text-base">📦</span>
             <span>Orders (কাস্টমার অর্ডার)</span>
           </button>
-          <button data-tab="products" class="sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="products" class="sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent">
             <span class="text-base">🛍️</span>
             <span>Products (পণ্য ব্যাবস্থাপনা)</span>
           </button>
-          <button data-tab="categories" class="sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="categories" class="sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent">
             <span class="text-base">🗂️</span>
             <span>Categories (ক্যাটাগরি)</span>
           </button>
-          <button data-tab="customers" class="sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="customers" class="sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent">
             <span class="text-base">👥</span>
             <span>Customers (গ্রাহক ডাটা)</span>
           </button>
-          <button data-tab="settings" class="sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition">
+          <button data-tab="settings" class="sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent">
             <span class="text-base">🏠</span>
             <span>Site Settings (সাইট কন্ট্রোল)</span>
           </button>
@@ -173,46 +299,46 @@
 
         <!-- TOP STATISTICS STAT CARDS ROW -->
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-slate-700/60 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Total Orders</p>
-              <h4 id="ov-total-orders" class="text-lg font-extrabold font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-emerald-450 transition duration-200">Total Orders</p>
+              <h4 id="ov-total-orders" class="text-2xl font-black font-sans mt-2 text-slate-50">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-amber-500/20 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Pending</p>
-              <h4 id="ov-pending-orders" class="text-lg font-extrabold text-amber-500 font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-amber-455 transition duration-200">Pending</p>
+              <h4 id="ov-pending-orders" class="text-2xl font-black text-amber-500 font-sans mt-2">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-blue-500/20 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Confirmed</p>
-              <h4 id="ov-confirmed-orders" class="text-lg font-extrabold text-blue-500 font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-blue-455 transition duration-200">Confirmed</p>
+              <h4 id="ov-confirmed-orders" class="text-2xl font-black text-blue-500 font-sans mt-2">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-red-500/20 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Cancelled</p>
-              <h4 id="ov-cancelled-orders" class="text-lg font-extrabold text-red-500 font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-red-455 transition duration-200">Cancelled</p>
+              <h4 id="ov-cancelled-orders" class="text-2xl font-black text-red-500 font-sans mt-2">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-emerald-500/20 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Products</p>
-              <h4 id="ov-total-products" class="text-lg font-extrabold text-emerald-500 font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-emerald-455 transition duration-200">Products</p>
+              <h4 id="ov-total-products" class="text-2xl font-black text-emerald-500 font-sans mt-2">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden flex flex-col justify-between">
+          <div class="glass-card rounded-2xl p-4.5 relative overflow-hidden flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:border-cyan-500/20 group">
             <div>
-              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold">Customers</p>
-              <h4 id="ov-total-customers" class="text-lg font-extrabold text-cyan-400 font-sans mt-1">0</h4>
+              <p class="text-[10px] text-slate-400 font-sans tracking-wide uppercase font-bold group-hover:text-cyan-455 transition duration-200">Customers</p>
+              <h4 id="ov-total-customers" class="text-2xl font-black text-cyan-400 font-sans mt-2">0</h4>
             </div>
           </div>
-          <div class="bg-[#1e293b] rounded-xl border border-slate-800 p-4 relative overflow-hidden col-span-2 md:col-span-1 border-emerald-950 bg-gradient-to-br from-[#1e293b] to-emerald-950/20 flex flex-col justify-between">
+          <div class="gradient-emerald-card rounded-2xl p-4.5 relative overflow-hidden col-span-2 md:col-span-1 flex flex-col justify-between transition-all duration-350 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-950/20 group">
             <div>
-              <p class="text-[10px] text-emerald-450 tracking-wide uppercase font-bold">Revenue</p>
-              <h4 id="ov-total-revenue" class="text-lg font-black text-emerald-400 font-mono mt-1">৳০</h4>
+              <p class="text-[10px] text-emerald-400 tracking-wide uppercase font-black">Revenue</p>
+              <h4 id="ov-total-revenue" class="text-2xl font-black text-emerald-400 font-mono mt-2">৳০</h4>
             </div>
           </div>
         </div>
@@ -1239,6 +1365,8 @@ create policy "Enable update for everyone" on public.orders for update using (tr
   <!-- MODULE SCRIPT CONTROL CENTRE AND DATABASE LINK OPERATIONS               -->
   <!-- ========================================================================= -->
   <script type="module">
+    import { getSupabaseConfig, testSupabaseConnection, syncLocalOrdersToSupabase } from '/src/supabase.js';
+
     // Safe initialization with local fallback structures
     const BANGLADESH_DISTRICTS = [
       "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail",
@@ -1423,9 +1551,9 @@ create policy "Enable update for everyone" on public.orders for update using (tr
       const tabs = document.querySelectorAll('.sidebar-tab');
       tabs.forEach(tab => {
         if (tab.getAttribute('data-tab') === destinationPanelId) {
-          tab.className = "sidebar-tab active bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition";
+          tab.className = "sidebar-tab active nav-indicator-active bg-slate-800/80 border border-emerald-500/10 text-emerald-400 font-bold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition shadow-sm shadow-emerald-950/20";
         } else {
-          tab.className = "sidebar-tab hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition";
+          tab.className = "sidebar-tab hover:bg-slate-800/45 text-slate-400 hover:text-slate-200 font-semibold text-xs h-10 w-full rounded-xl text-left px-4 flex items-center gap-3 transition border border-transparent";
         }
       });
 
@@ -1525,20 +1653,20 @@ create policy "Enable update for everyone" on public.orders for update using (tr
 
     // Helper Badge generators
     function getOrderStatusBadgeHTML(status) {
-      if (status === "Pending") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-505 text-amber-500 border border-amber-500/20 font-sans font-sans">Pending</span>`;
-      if (status === "Confirmed") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/10 text-blue-450 text-blue-405 text-blue-404 text-blue-400 border border-blue-500/20 font-sans font-sans">Confirmed</span>`;
-      if (status === "Processing") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-purple-500/10 text-purple-405 text-purple-400 border border-purple-500/20 font-sans font-sans">Processing</span>`;
-      if (status === "Shipped") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-500/10 text-indigo-405 text-indigo-400 border border-indigo-500/20 font-sans font-sans">Shipped</span>`;
-      if (status === "Delivered") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-405 text-emerald-400 border border-emerald-500/20 font-sans font-sans">Delivered</span>`;
-      return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-500/10 text-red-505 text-red-500 border border-red-500/20 font-sans font-sans font-sans">Cancelled</span>`;
+      if (status === "Pending") return `<span class="glow-badge glow-badge-pending font-sans">Pending</span>`;
+      if (status === "Confirmed") return `<span class="glow-badge glow-badge-confirmed font-sans">Confirmed</span>`;
+      if (status === "Processing") return `<span class="glow-badge glow-badge-confirmed font-sans bg-purple-500/10 text-purple-400 border-purple-500/25">Processing</span>`;
+      if (status === "Shipped") return `<span class="glow-badge glow-badge-shipped font-sans bg-indigo-500/10 text-indigo-400 border-indigo-500/25">Shipped</span>`;
+      if (status === "Delivered") return `<span class="glow-badge glow-badge-shipped font-sans">Delivered</span>`;
+      return `<span class="glow-badge glow-badge-cancelled font-sans">Cancelled</span>`;
     }
 
     function getCallStatusBadgeHTML(callStatus) {
       const normalized = callStatus || "Not Called";
-      if (normalized === "Call Success") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-600/10 text-emerald-505 text-emerald-500 border border-emerald-800/20 font-sans font-sans">${normalized}</span>`;
-      if (normalized === "Fake Order") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-red-600/10 text-red-405 text-red-400 border border-red-800/20 font-sans font-sans">${normalized}</span>`;
-      if (normalized === "Not Called") return `<span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-slate-800 text-slate-400 border border-slate-700 font-sans font-sans font-sans">${normalized}</span>`;
-      return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-600/10 text-amber-550 text-amber-500 border border-amber-800/20 font-sans font-sans">${normalized}</span>`;
+      if (normalized === "Call Success") return `<span class="glow-badge glow-badge-shipped font-sans">Call Success</span>`;
+      if (normalized === "Fake Order") return `<span class="glow-badge glow-badge-cancelled font-sans">Fake Order</span>`;
+      if (normalized === "Not Called") return `<span class="glow-badge font-sans bg-slate-850 text-slate-400 border border-slate-750">Not Called</span>`;
+      return `<span class="glow-badge glow-badge-pending font-sans">${normalized}</span>`;
     }
 
     // 2. Orders database view with sorting filter
@@ -2812,11 +2940,6 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
     // SUPABASE INTEGRATION UTILITIES (Vercel-Ready)
     // ==========================================
     
-    // Lazy module import loader
-    async function getSupabaseModule() {
-      return await import('/src/supabase.js');
-    }
-
     window.saveSupabaseCredentials = async function() {
       const url = document.getElementById('set-sb-url').value.trim();
       const key = document.getElementById('set-sb-anon-key').value.trim();
@@ -2841,7 +2964,6 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
       triggerToast("সংযোগ পরীক্ষা করা হচ্ছে (Connecting)...", "info");
       
       try {
-        const { testSupabaseConnection } = await getSupabaseModule();
         const res = await testSupabaseConnection(url, key);
         if (res.success) {
           triggerToast(res.message, "success");
@@ -2859,7 +2981,6 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
 
     window.checkSupabaseStatus = async function() {
       try {
-        const { getSupabaseConfig, testSupabaseConnection } = await getSupabaseModule();
         const config = getSupabaseConfig();
         const badge = document.getElementById('supabase-status-badge');
 
@@ -2908,7 +3029,6 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
       icon.classList.add('hidden');
 
       try {
-        const { syncLocalOrdersToSupabase } = await getSupabaseModule();
         const res = await syncLocalOrdersToSupabase();
         
         if (res.success) {
