@@ -394,7 +394,7 @@
 
       let user = null;
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initDashboardPage() {
         user = getCurrentUser();
 
         // Security check
@@ -407,7 +407,13 @@
         }
 
         initializeDashboardUI();
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDashboardPage);
+      } else {
+        initDashboardPage();
+      }
 
       function initializeDashboardUI() {
         // Set profile headers

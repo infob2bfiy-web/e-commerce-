@@ -876,11 +876,17 @@ function renderWishlistPageInside() {
   container.innerHTML = wishlist.map(p => createProductCardHTML(p)).join('');
 }
 
-// Trigger initializations on loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Trigger initializations on loaded safely
+function startMainApplication() {
   initDB();
   injectSharedLayouts();
   updateCartBadges();
   updateWishlistBadges();
   bindGlobalProductButtons();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startMainApplication);
+} else {
+  startMainApplication();
+}

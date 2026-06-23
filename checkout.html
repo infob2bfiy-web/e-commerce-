@@ -6,7 +6,7 @@
     <title>Checkout - Organic Grocery Store</title>
     <link rel="stylesheet" href="/src/style.css">
     <script type="module" src="/src/app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
       .bengali-font {
@@ -485,7 +485,7 @@
       let deliveryCharge = 80;
       let activeDiscount = 0;
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initCheckoutPage() {
         cart = getCart();
         siteSettings = getSettings();
         currentUser = getCurrentUser();
@@ -530,7 +530,13 @@
 
         // Draw calculation numbers
         recalculateGrandTotal();
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCheckoutPage);
+      } else {
+        initCheckoutPage();
+      }
 
       // Download invoice as A4 PDF document using html2pdf with isolated iframe to prevent css hanging
       window.downloadInvoicePDF = function() {

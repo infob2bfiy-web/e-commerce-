@@ -4,21 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Green Grocery - Admin Panel</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts - Inter & Hind Siliguri -->
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;505;600;700;800&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'Hind Siliguri', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="/src/style.css">
   <style>
     /* Custom Scrollbar for dark theme */
     ::-webkit-scrollbar {
@@ -1252,7 +1238,7 @@ create policy "Enable update for everyone" on public.orders for update using (tr
   <!-- ========================================================================= -->
   <!-- MODULE SCRIPT CONTROL CENTRE AND DATABASE LINK OPERATIONS               -->
   <!-- ========================================================================= -->
-  <script>
+  <script type="module">
     // Safe initialization with local fallback structures
     const BANGLADESH_DISTRICTS = [
       "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail",
@@ -2948,12 +2934,45 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
       });
     };
 
+    // Expose local module functions to window so inline HTML event handlers (onclick etc.) work perfectly
+    window.initializeDatabaseState = initializeDatabaseState;
+    window.triggerToast = triggerToast;
+    window.authenticateSessionCheck = authenticateSessionCheck;
+    window.switchTab = switchTab;
+    window.toggleMobileSidebar = toggleMobileSidebar;
+    window.getDBItem = getDBItem;
+    window.setDBItem = setDBItem;
+    window.renderActiveDashboardMetrics = renderActiveDashboardMetrics;
+    window.getOrderStatusBadgeHTML = getOrderStatusBadgeHTML;
+    window.getCallStatusBadgeHTML = getCallStatusBadgeHTML;
+    window.renderOrdersPanelTable = renderOrdersPanelTable;
+    window.filtersAppliedOrders = filtersAppliedOrders;
+    window.clearAllOrderFilters = clearAllOrderFilters;
+    window.viewOrderDetail = viewOrderDetail;
+    window.highlightModalStatusChoiceButtons = highlightModalStatusChoiceButtons;
+    window.updateDetailsModalState = updateDetailsModalState;
+    window.saveAdminOrderNote = saveAdminOrderNote;
+    window.copyFormOrderDetailReceipt = copyFormOrderDetailReceipt;
+    window.closeOrderDetailModal = closeOrderDetailModal;
+    window.deleteAdminOrder = deleteAdminOrder;
+    window.renderProductsPanelTable = renderProductsPanelTable;
+    window.openProductModal = openProductModal;
+    window.closeProductModal = closeProductModal;
+    window.deleteAdminProduct = deleteAdminProduct;
+    window.renderCategoriesPanelTable = renderCategoriesPanelTable;
+    window.deleteAdminCategory = deleteAdminCategory;
+    window.renderCustomersPanelTable = renderCustomersPanelTable;
+    window.populateActiveSettingsForm = populateActiveSettingsForm;
+    window.setSubTab = setSubTab;
+    window.renderBannersSettingsList = renderBannersSettingsList;
+    window.deleteAdminBanner = deleteAdminBanner;
+
 
     // ==========================================
     // INITIALIZATION AND EVENT ATTACHMENTS
     // ==========================================
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function startAdminApplication() {
       // Seed first time defaults
       initializeDatabaseState();
 
@@ -3009,7 +3028,13 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
         });
       });
 
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startAdminApplication);
+    } else {
+      startAdminApplication();
+    }
   </script>
 </body>
 </html>

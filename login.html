@@ -75,7 +75,7 @@
     <script type="module">
       import { showToast } from '/src/app.js';
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initLoginPage() {
         const tabLoginBtn = document.getElementById('tab-login-btn');
         const tabRegisterBtn = document.getElementById('tab-register-btn');
 
@@ -152,7 +152,13 @@
             window.location.href = '/dashboard.html';
           }, 600);
         });
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLoginPage);
+      } else {
+        initLoginPage();
+      }
     </script>
   </body>
 </html>

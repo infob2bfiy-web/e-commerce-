@@ -113,7 +113,7 @@
     <script type="module">
       import { getProducts, getCategories, createProductCardHTML } from '/src/app.js';
       
-      document.addEventListener('DOMContentLoaded', () => {
+      function initShopPage() {
         const products = getProducts();
         const categories = getCategories();
 
@@ -303,7 +303,13 @@
         document.getElementById('load-more-btn').addEventListener('click', () => {
           showToast("সকল পণ্য লোড করা সম্পন্ন হয়েছে!", "success");
         });
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initShopPage);
+      } else {
+        initShopPage();
+      }
     </script>
   </body>
 </html>

@@ -129,7 +129,7 @@
     <script type="module">
       import { getProducts, getCategories, createProductCardHTML, getSettings } from '/src/app.js';
       
-      document.addEventListener('DOMContentLoaded', () => {
+      function initIndexPage() {
         const products = getProducts();
         const categories = getCategories();
         const settings = getSettings();
@@ -231,9 +231,12 @@
               }
             }
           }
-          document.getElementById('timer-hour').textContent = String(hours).padStart(2, '0');
-          document.getElementById('timer-min').textContent = String(minutes).padStart(2, '0');
-          document.getElementById('timer-sec').textContent = String(seconds).padStart(2, '0');
+          const tHour = document.getElementById('timer-hour');
+          const tMin = document.getElementById('timer-min');
+          const tSec = document.getElementById('timer-sec');
+          if (tHour) tHour.textContent = String(hours).padStart(2, '0');
+          if (tMin) tMin.textContent = String(minutes).padStart(2, '0');
+          if (tSec) tSec.textContent = String(seconds).padStart(2, '0');
         }, 1000);
 
         // 4. Render category-wise sections
@@ -269,7 +272,13 @@
         if (allProdsGrid) {
           allProdsGrid.innerHTML = products.map(p => createProductCardHTML(p)).join('');
         }
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initIndexPage);
+      } else {
+        initIndexPage();
+      }
     </script>
   </body>
 </html>

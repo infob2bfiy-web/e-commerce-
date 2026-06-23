@@ -83,7 +83,7 @@
     <script type="module">
       import { getCart, updateCartBadges, showToast } from '/src/app.js';
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initCartPage() {
         // Redraw cart table contents
         updateCartBadges();
 
@@ -162,7 +162,13 @@
             }
           }
         });
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCartPage);
+      } else {
+        initCartPage();
+      }
     </script>
   </body>
 </html>

@@ -41,7 +41,7 @@
     <script type="module">
       import { getProducts, addToCart, toggleWishlist, getWishlist, createProductCardHTML } from '/src/app.js';
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initProductDetailPage() {
         const products = getProducts();
         
         // Retrieve Product ID from URL
@@ -232,7 +232,13 @@
             relatedGrid.innerHTML = products.filter(p => p.id !== product.id).slice(0, 4).map(p => createProductCardHTML(p)).join('');
           }
         }
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initProductDetailPage);
+      } else {
+        initProductDetailPage();
+      }
     </script>
   </body>
 </html>

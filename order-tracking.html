@@ -119,7 +119,7 @@
     <script type="module">
       import { showToast } from '/src/app.js';
 
-      document.addEventListener('DOMContentLoaded', () => {
+      function initOrderTrackingPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const orderIdParam = urlParams.get('id');
 
@@ -198,9 +198,15 @@
           }
 
           displayBox.classList.remove('hidden');
-          showToast("অর্ডার স্ট্যাটাস সফলভাবে লোড হয়েছে!", "success");
+          showToast("অर्डर স্ট্যাটাস সফলভাবে লোড হয়েছে!", "success");
         }
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initOrderTrackingPage);
+      } else {
+        initOrderTrackingPage();
+      }
     </script>
   </body>
 </html>
