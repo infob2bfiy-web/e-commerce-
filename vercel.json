@@ -7,12 +7,12 @@
       "destination": "/admin/index.html"
     },
     {
-      "source": "/admin/(.*)",
+      "source": "/admin/",
       "destination": "/admin/index.html"
     },
     {
-      "source": "/((?!assets/|.*\\..*).*)",
-      "destination": "/index.html"
+      "source": "/admin/:path*",
+      "destination": "/admin/index.html"
     }
   ]
 }
