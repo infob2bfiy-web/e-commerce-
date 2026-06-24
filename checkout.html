@@ -438,8 +438,8 @@
 
     <!-- Script processes for Checkout Logic -->
     <script type="module">
-      import { getCart, getSettings, clearCart, showToast, getCurrentUser } from '/src/app.js';
-      import { saveOrderToSupabase } from '/src/supabase.js';
+      import { getCart, getSettings, clearCart, showToast, getCurrentUser } from './src/app.js';
+      import { saveOrderToSupabase } from './src/supabase.js';
 
       // Bangladesh Address Hierarchy Dictionary matching elegant dynamic selector design
       const DIVISION_DATA = {
@@ -486,50 +486,55 @@
       let activeDiscount = 0;
 
       function initCheckoutPage() {
-        cart = getCart();
-        siteSettings = getSettings();
-        currentUser = getCurrentUser();
+        try {
+          cart = (getCart() || []).filter(Boolean);
+          siteSettings = getSettings() || {};
+          currentUser = getCurrentUser();
 
-        // Safety redirect if cart is completely empty
-        if (cart.length === 0) {
-          showToast("অর্ডার বুক করতে আগে কার্টে পণ্য যোগ করুন!", "danger");
-          setTimeout(() => {
-            window.location.href = '/shop.html';
-          }, 1100);
-          return;
-        }
-
-        // Initialize Address Dropdowns
-        setupAddressSelectors();
-
-        // Load saved customer info from localStorage (Auto prefill)
-        loadSavedCustomerInfo();
-
-        // Bind auto-save listeners on all customer fields so their info is kept up to date
-        const customerFields = ['cust-name', 'cust-phone', 'cust-email', 'cust-address', 'cust-note', 'cust-division', 'cust-district', 'cust-upazila'];
-        customerFields.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
-            el.addEventListener(eventType, saveCustomerInfoToLocalStorage);
+          // Safety redirect if cart is completely empty
+          if (cart.length === 0) {
+            showToast("অর্ডার বুক করতে আগে কার্টে পণ্য যোগ করুন!", "danger");
+            setTimeout(() => {
+              window.location.href = '/shop.html';
+            }, 1100);
+            return;
           }
-        });
 
-        // Apply any session coupon applied in Cart Page
-        const cachedCode = sessionStorage.getItem('activeCouponCode');
-        const cachedPercent = Number(sessionStorage.getItem('activeCouponPercent') || 0);
-        const cachedFlat = Number(sessionStorage.getItem('activeCouponFlat') || 0);
-        if (cachedCode) {
-          const codeInput = document.getElementById('coupon-code-input');
-          if (codeInput) codeInput.value = cachedCode;
-          calculateCouponDiscount(cachedPercent, cachedFlat);
+          // Initialize Address Dropdowns
+          setupAddressSelectors();
+
+          // Load saved customer info from localStorage (Auto prefill)
+          loadSavedCustomerInfo();
+
+          // Bind auto-save listeners on all customer fields so their info is kept up to date
+          const customerFields = ['cust-name', 'cust-phone', 'cust-email', 'cust-address', 'cust-note', 'cust-division', 'cust-district', 'cust-upazila'];
+          customerFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+              const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
+              el.addEventListener(eventType, saveCustomerInfoToLocalStorage);
+            }
+          });
+
+          // Apply any session coupon applied in Cart Page
+          const cachedCode = sessionStorage.getItem('activeCouponCode');
+          const cachedPercent = Number(sessionStorage.getItem('activeCouponPercent') || 0);
+          const cachedFlat = Number(sessionStorage.getItem('activeCouponFlat') || 0);
+          if (cachedCode) {
+            const codeInput = document.getElementById('coupon-code-input');
+            if (codeInput) codeInput.value = cachedCode;
+            calculateCouponDiscount(cachedPercent, cachedFlat);
+          }
+
+          // Render checkout cart list
+          renderCheckoutCart();
+
+          // Draw calculation numbers
+          recalculateGrandTotal();
+        } catch (err) {
+          console.error("Error in initCheckoutPage:", err);
+          showToast("চেকআউট পেজ লোড হতে সমস্যা হয়েছে। দয়া করে পেজটি রিফ্রেশ করুন।", "danger");
         }
-
-        // Render checkout cart list
-        renderCheckoutCart();
-
-        // Draw calculation numbers
-        recalculateGrandTotal();
       }
 
       if (document.readyState === 'loading') {
@@ -1036,7 +1041,7 @@
       }
 
       // Delivery Area Card Click Handler with exact UI radio simulation
-      window.selectDeliveryArea = function(area) {
+      function selectDeliveryArea(area) {
         selectedArea = area;
         
         const cardInside = document.getElementById('card-inside-dhaka');
@@ -1052,32 +1057,41 @@
           deliveryCharge = 80;
           labelDelivery.textContent = 'ডেলিভারি চার্জ (ঢাকা):';
           
-          cardInside.className = "border-2 border-orange-500 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition shadow-sm";
-          cardOutside.className = "border border-gray-250 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition";
+          if (cardInside) cardInside.className = "border-2 border-orange-500 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition shadow-sm";
+          if (cardOutside) cardOutside.className = "border border-gray-250 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition";
 
-          radioInside.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-orange-700"></div>`;
-          radioInside.className = "w-5 h-5 rounded-full border-2 border-orange-700 flex items-center justify-center bg-white";
+          if (radioInside) {
+            radioInside.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-orange-700"></div>`;
+            radioInside.className = "w-5 h-5 rounded-full border-2 border-orange-700 flex items-center justify-center bg-white";
+          }
 
-          radioOutside.innerHTML = ``;
-          radioOutside.className = "w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center bg-white";
+          if (radioOutside) {
+            radioOutside.innerHTML = ``;
+            radioOutside.className = "w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center bg-white";
+          }
         } else {
           // Outside Dhaka active
           deliveryCharge = 100;
           labelDelivery.textContent = 'ডেলিভারি চার্জ (ঢাকার বাইরে):';
 
-          cardInside.className = "border border-gray-250 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition";
-          cardOutside.className = "border-2 border-orange-500 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition shadow-sm";
+          if (cardInside) cardInside.className = "border border-gray-250 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition";
+          if (cardOutside) cardOutside.className = "border-2 border-orange-500 bg-white hover:border-emerald-600 rounded-2xl p-4 flex items-center justify-between cursor-pointer select-none transition shadow-sm";
 
-          radioInside.innerHTML = ``;
-          radioInside.className = "w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center bg-white";
+          if (radioInside) {
+            radioInside.innerHTML = ``;
+            radioInside.className = "w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center bg-white";
+          }
 
-          radioOutside.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-orange-700"></div>`;
-          radioOutside.className = "w-5 h-5 rounded-full border-2 border-orange-700 flex items-center justify-center bg-white";
+          if (radioOutside) {
+            radioOutside.innerHTML = `<div class="w-2.5 h-2.5 rounded-full bg-orange-700"></div>`;
+            radioOutside.className = "w-5 h-5 rounded-full border-2 border-orange-700 flex items-center justify-center bg-white";
+          }
         }
 
         // Dynamic Calculation Refresh
         recalculateGrandTotal();
       }
+      window.selectDeliveryArea = selectDeliveryArea;
 
       // Live computation total pricing logic with delivery charge added
       function recalculateGrandTotal() {
@@ -1154,13 +1168,14 @@
 
       // Form submission handler with exact DB insertions
       window.handleSubmitCheckout = function() {
-        const nameVal = document.getElementById('cust-name').value.trim();
-        const phoneVal = document.getElementById('cust-phone').value.trim();
-        const divisionVal = document.getElementById('cust-division').value;
-        const districtVal = document.getElementById('cust-district').value;
-        const upazilaVal = document.getElementById('cust-upazila').value;
-        const addressVal = document.getElementById('cust-address').value.trim();
-        const noteVal = document.getElementById('cust-note').value.trim();
+        try {
+        const nameVal = document.getElementById('cust-name')?.value?.trim() || '';
+        const phoneVal = document.getElementById('cust-phone')?.value?.trim() || '';
+        const divisionVal = document.getElementById('cust-division')?.value || '';
+        const districtVal = document.getElementById('cust-district')?.value || '';
+        const upazilaVal = document.getElementById('cust-upazila')?.value || '';
+        const addressVal = document.getElementById('cust-address')?.value?.trim() || '';
+        const noteVal = document.getElementById('cust-note')?.value?.trim() || '';
 
         // Hard checks
         if (!nameVal || !phoneVal || !divisionVal || !districtVal || !upazilaVal || !addressVal) {
@@ -1174,13 +1189,18 @@
         }
 
         // Math totals
-        const subtotal = cart.reduce((sum, item) => sum + ((item.discountPrice || item.price) * item.qty), 0);
-        const grandtotal = subtotal + deliveryCharge - activeDiscount;
+        const filteredCart = (cart || []).filter(Boolean);
+        const subtotal = filteredCart.reduce((sum, item) => {
+          const priceVal = Number(item.discountPrice || item.price || 0);
+          const qtyVal = Number(item.qty || 1);
+          return sum + (priceVal * qtyVal);
+        }, 0);
+        const grandtotal = subtotal + Number(deliveryCharge || 0) - Number(activeDiscount || 0);
 
         // Build elegant unique order string like ORD-2026-X77A
         const randSeed = Math.random().toString(16).substr(2, 4).toUpperCase();
         const orderId = `ORD-2026-${randSeed}`;
-        const customerEmail = document.getElementById('cust-email').value.trim();
+        const customerEmail = document.getElementById('cust-email')?.value?.trim() || '';
 
         const newOrder = {
           orderId: orderId,
@@ -1193,7 +1213,7 @@
           area: upazilaVal,
           address: addressVal,
           note: noteVal,
-          items: cart,
+          items: filteredCart,
           subtotal: subtotal,
           discount: activeDiscount,
           deliveryFee: deliveryCharge,
@@ -1249,9 +1269,10 @@
         // Reset state cart
         clearCart();
 
-        // Hide checkout grid
-        document.getElementById('checkout-main-grid').classList.add('hidden');
-        document.querySelector('h1').parentElement.classList.add('hidden');
+        // Hide checkout grid and titles safely
+        document.getElementById('checkout-main-grid')?.classList.add('hidden');
+        document.querySelector('h1')?.parentElement?.classList.add('hidden');
+        document.querySelector('.grid-cols-4')?.classList.add('hidden');
 
         // Reveal order details receipt modal
         const receiptOverlay = document.getElementById('success-receipt-overlay');
@@ -1369,6 +1390,10 @@
           showToast("অর্ডার সফল এবং স্বয়ংক্রিয়ভাবে অ্যাকাউন্ট তৈরি হয়েছে!", "success");
         } else {
           showToast("আপনার অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!", "success");
+        }
+        } catch (err) {
+          console.error("Critical error inside handleSubmitCheckout:", err);
+          showToast("অর্ডার সম্পন্ন করার সময় কোনো সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন!", "danger");
         }
       }
     </script>

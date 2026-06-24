@@ -75,7 +75,7 @@
 
     <!-- Script triggers contact submit feedback -->
     <script type="module">
-      import { showToast } from '/src/app.js';
+      import { showToast } from './src/app.js';
       document.getElementById('contact-form')?.addEventListener('submit', (e) => {
         e.preventDefault();
         showToast("আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে! শীঘ্রই আমরা যোগাযোগ করব।", "success");

@@ -1365,7 +1365,7 @@ create policy "Enable update for everyone" on public.orders for update using (tr
   <!-- MODULE SCRIPT CONTROL CENTRE AND DATABASE LINK OPERATIONS               -->
   <!-- ========================================================================= -->
   <script type="module">
-    import { getSupabaseConfig, testSupabaseConnection, syncLocalOrdersToSupabase } from '/src/supabase.js';
+    import { getSupabaseConfig, testSupabaseConnection, syncLocalOrdersToSupabase } from '../src/supabase.js';
 
     // Safe initialization with local fallback structures
     const BANGLADESH_DISTRICTS = [
@@ -1594,61 +1594,100 @@ create policy "Enable update for everyone" on public.orders for update using (tr
     // ==========================================
 
     function getDBItem(key) {
-      return JSON.parse(localStorage.getItem(key) || '[]');
+      try {
+        const val = localStorage.getItem(key);
+        if (!val || val === 'undefined') {
+          if (key === 'siteSettings') return {};
+          return [];
+        }
+        return JSON.parse(val);
+      } catch (e) {
+        console.error("Failed to parse local storage for key: " + key, e);
+        if (key === 'siteSettings') return {};
+        return [];
+      }
     }
 
     function setDBItem(key, array) {
-      localStorage.setItem(key, JSON.stringify(array));
+      try {
+        localStorage.setItem(key, JSON.stringify(array));
+      } catch (e) {
+        console.error("Failed to write to local storage for key: " + key, e);
+      }
     }
 
     // 1. Dashboard calculations
     function renderActiveDashboardMetrics() {
-      const products = getDBItem('products');
-      const orders = getDBItem('orders');
-      const users = getDBItem('users');
+      try {
+        const products = getDBItem('products') || [];
+        const orders = getDBItem('orders') || [];
+        const users = getDBItem('users') || [];
 
-      // Revenue: exclude Cancelled
-      const revenueAcc = orders.reduce((sum, o) => sum + (o.status !== "Cancelled" ? o.totalPrice : 0), 0);
-      const pendingCount = orders.filter(o => o.status === "Pending").length;
-      const confirmedCount = orders.filter(o => o.status === "Confirmed").length;
-      const cancelledCount = orders.filter(o => o.status === "Cancelled").length;
-
-      document.getElementById('ov-total-orders').textContent = orders.length;
-      document.getElementById('ov-pending-orders').textContent = pendingCount;
-      document.getElementById('ov-confirmed-orders').textContent = confirmedCount;
-      document.getElementById('ov-cancelled-orders').textContent = cancelledCount;
-      document.getElementById('ov-total-products').textContent = products.length;
-      document.getElementById('ov-total-customers').textContent = users.length;
-      document.getElementById('ov-total-revenue').textContent = `৳${revenueAcc}`;
-
-      // Populate recent orders list table up to last 10 entries
-      const sortedRecent = [...orders].reverse().slice(0, 10);
-      const recentTbody = document.getElementById('recent-orders-tbody');
-      
-      if (sortedRecent.length === 0) {
-        recentTbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500 font-bold">কোনো সাম্প্রতিক অর্ডার নেই।</td></tr>`;
-        return;
-      }
-
-      recentTbody.innerHTML = sortedRecent.map(ord => {
-        const orderStatusBadge = getOrderStatusBadgeHTML(ord.status);
-        const callStatusBadge = getCallStatusBadgeHTML(ord.callStatus);
+        // Revenue: exclude Cancelled
+        const revenueAcc = orders.reduce((sum, o) => {
+          if (!o) return sum;
+          const price = Number(o.totalPrice) || 0;
+          return sum + (o.status !== "Cancelled" ? price : 0);
+        }, 0);
         
-        return `
-          <tr class="border-b border-slate-800 table-row-striped custom-transition text-slate-300">
-            <td class="p-3 font-semibold text-emerald-400 font-mono select-all">${ord.orderId}</td>
-            <td class="p-3 select-none text-slate-400">${ord.customerName}</td>
-            <td class="p-3 whitespace-nowrap text-slate-400 font-sans">${ord.date}</td>
-            <td class="p-3 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-slate-400 select-none">${ord.items.map(i => i.name).join(', ')}</td>
-            <td class="p-3 font-bold text-right text-emerald-400 font-mono">৳${ord.totalPrice}</td>
-            <td class="p-3">${orderStatusBadge}</td>
-            <td class="p-3">${callStatusBadge}</td>
-            <td class="p-3 text-right">
-              <button onclick="viewOrderDetail('${ord.orderId}')" class="bg-emerald-600/10 hover:bg-emerald-600 text-emerald-450 text-emerald-400 hover:text-white border border-emerald-800/30 font-bold py-1 px-3.5 rounded-lg text-[10px] cursor-pointer transition select-none font-sans">DETAILS</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+        const pendingCount = orders.filter(o => o && o.status === "Pending").length;
+        const confirmedCount = orders.filter(o => o && o.status === "Confirmed").length;
+        const cancelledCount = orders.filter(o => o && o.status === "Cancelled").length;
+
+        const ovTotalOrders = document.getElementById('ov-total-orders');
+        const ovPendingOrders = document.getElementById('ov-pending-orders');
+        const ovConfirmedOrders = document.getElementById('ov-confirmed-orders');
+        const ovCancelledOrders = document.getElementById('ov-cancelled-orders');
+        const ovTotalProducts = document.getElementById('ov-total-products');
+        const ovTotalCustomers = document.getElementById('ov-total-customers');
+        const ovTotalRevenue = document.getElementById('ov-total-revenue');
+
+        if (ovTotalOrders) ovTotalOrders.textContent = orders.length;
+        if (ovPendingOrders) ovPendingOrders.textContent = pendingCount;
+        if (ovConfirmedOrders) ovConfirmedOrders.textContent = confirmedCount;
+        if (ovCancelledOrders) ovCancelledOrders.textContent = cancelledCount;
+        if (ovTotalProducts) ovTotalProducts.textContent = products.length;
+        if (ovTotalCustomers) ovTotalCustomers.textContent = users.length;
+        if (ovTotalRevenue) ovTotalRevenue.textContent = `৳${revenueAcc}`;
+
+        // Populate recent orders list table up to last 10 entries
+        const sortedRecent = [...orders].reverse().slice(0, 10);
+        const recentTbody = document.getElementById('recent-orders-tbody');
+        
+        if (!recentTbody) return;
+        
+        if (sortedRecent.length === 0) {
+          recentTbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500 font-bold">কোনো সাম্প্রতিক অর্ডার নেই।</td></tr>`;
+          return;
+        }
+
+        recentTbody.innerHTML = sortedRecent.map(ord => {
+          if (!ord) return '';
+          const orderStatusBadge = getOrderStatusBadgeHTML(ord.status);
+          const callStatusBadge = getCallStatusBadgeHTML(ord.callStatus);
+          const itemsText = (ord.items && Array.isArray(ord.items)) 
+            ? ord.items.map(i => i.name || 'Unknown Item').join(', ') 
+            : 'No items';
+          const totalPriceVal = Number(ord.totalPrice) || 0;
+          
+          return `
+            <tr class="border-b border-slate-800 table-row-striped custom-transition text-slate-300">
+              <td class="p-3 font-semibold text-emerald-400 font-mono select-all">${ord.orderId || 'GG-0000'}</td>
+              <td class="p-3 select-none text-slate-400">${ord.customerName || 'Anonymous'}</td>
+              <td class="p-3 whitespace-nowrap text-slate-400 font-sans">${ord.date || ''}</td>
+              <td class="p-3 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap text-slate-400 select-none">${itemsText}</td>
+              <td class="p-3 font-bold text-right text-emerald-400 font-mono">৳${totalPriceVal}</td>
+              <td class="p-3">${orderStatusBadge}</td>
+              <td class="p-3">${callStatusBadge}</td>
+              <td class="p-3 text-right">
+                <button onclick="viewOrderDetail('${ord.orderId}')" class="bg-emerald-600/10 hover:bg-emerald-600 text-emerald-450 text-emerald-400 hover:text-white border border-emerald-800/30 font-bold py-1 px-3.5 rounded-lg text-[10px] cursor-pointer transition select-none font-sans">DETAILS</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Error in renderActiveDashboardMetrics:", err);
+      }
     }
 
     // Helper Badge generators
@@ -1671,42 +1710,57 @@ create policy "Enable update for everyone" on public.orders for update using (tr
 
     // 2. Orders database view with sorting filter
     function renderOrdersPanelTable(ordersToDisplay = null) {
-      const orders = ordersToDisplay || getDBItem('orders');
-      const tbody = document.getElementById('orders-database-tbody');
+      try {
+        const orders = ordersToDisplay || getDBItem('orders') || [];
+        const tbody = document.getElementById('orders-database-tbody');
 
-      if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500 font-bold">কোনো অর্ডার পাওয়া যায়নি!</td></tr>`;
-        return;
+        if (!tbody) return;
+
+        if (orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500 font-bold">কোনো অর্ডার পাওয়া যায়নি!</td></tr>`;
+          return;
+        }
+
+        // Show chronological sorted descending
+        const chronData = [...orders].filter(Boolean).sort((a, b) => {
+          const idA = a.orderId || '';
+          const idB = b.orderId || '';
+          return idB.localeCompare(idA);
+        });
+
+        tbody.innerHTML = chronData.map(ord => {
+          if (!ord) return '';
+          const orderBadge = getOrderStatusBadgeHTML(ord.status);
+          const callBadge = getCallStatusBadgeHTML(ord.callStatus);
+          const itemsText = (ord.items && Array.isArray(ord.items))
+            ? ord.items.map(i => `${i.name || 'Unknown Item'} (x${i.qty || 1})`).join(', ')
+            : 'No items';
+          const totalPriceVal = Number(ord.totalPrice) || 0;
+          
+          return `
+            <tr class="border-b border-slate-800 table-row-striped custom-transition text-slate-300">
+              <td class="p-3 font-semibold text-emerald-400 font-mono select-all">${ord.orderId || 'GG-0000'}</td>
+              <td class="p-3 text-slate-400 whitespace-nowrap font-sans">${ord.date || ''}</td>
+              <td class="p-3 text-left font-sans">
+                <p class="font-extrabold text-slate-200">${ord.customerName || 'Anonymous'}</p>
+                <p class="text-[10px] text-slate-500 font-mono select-all font-bold">${ord.customerPhone || ''}</p>
+              </td>
+              <td class="p-3 max-w-[140px] truncate-overflow select-none text-slate-400">
+                <p class="font-semibold line-clamp-1">${itemsText}</p>
+              </td>
+              <td class="p-3 font-bold text-right text-emerald-500 font-mono">৳${totalPriceVal}</td>
+              <td class="p-3">${orderBadge}</td>
+              <td class="p-3">${callBadge}</td>
+              <td class="p-3 text-right whitespace-nowrap gap-1">
+                <button onclick="viewOrderDetail('${ord.orderId}')" class="bg-[#0f172a] hover:bg-slate-700 text-slate-350 hover:text-white border border-slate-800 rounded-lg py-1 px-3 font-bold transition">VIEW</button>
+                <button onclick="deleteAdminOrder('${ord.orderId}')" class="text-red-500 hover:text-red-400 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Delete Permanent">✕</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Error in renderOrdersPanelTable:", err);
       }
-
-      // Show chronological sorted descending
-      const chronData = [...orders].sort((a, b) => b.orderId.localeCompare(a.orderId));
-
-      tbody.innerHTML = chronData.map(ord => {
-        const orderBadge = getOrderStatusBadgeHTML(ord.status);
-        const callBadge = getCallStatusBadgeHTML(ord.callStatus);
-        
-        return `
-          <tr class="border-b border-slate-800 table-row-striped custom-transition text-slate-300">
-            <td class="p-3 font-semibold text-emerald-400 font-mono select-all">${ord.orderId}</td>
-            <td class="p-3 text-slate-400 whitespace-nowrap font-sans">${ord.date}</td>
-            <td class="p-3 text-left font-sans">
-              <p class="font-extrabold text-slate-200">${ord.customerName}</p>
-              <p class="text-[10px] text-slate-500 font-mono select-all font-bold">${ord.customerPhone}</p>
-            </td>
-            <td class="p-3 max-w-[140px] truncate-overflow select-none text-slate-400">
-              <p class="font-semibold line-clamp-1">${ord.items.map(i => `${i.name} (x${i.qty})`).join(', ')}</p>
-            </td>
-            <td class="p-3 font-bold text-right text-emerald-500 font-mono font-mono">৳${ord.totalPrice}</td>
-            <td class="p-3">${orderBadge}</td>
-            <td class="p-3">${callBadge}</td>
-            <td class="p-3 text-right whitespace-nowrap gap-1">
-              <button onclick="viewOrderDetail('${ord.orderId}')" class="bg-[#0f172a] hover:bg-slate-700 text-slate-350 hover:text-white border border-slate-800 rounded-lg py-1 px-3 font-bold transition">VIEW</button>
-              <button onclick="deleteAdminOrder('${ord.orderId}')" class="text-red-500 hover:text-red-400 p-1.5 hover:bg-red-500/10 rounded-lg transition" title="Delete Permanent">✕</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
     }
 
     // Applied search filters
@@ -3093,61 +3147,71 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
     // ==========================================
 
     function startAdminApplication() {
-      // Seed first time defaults
-      initializeDatabaseState();
+      try {
+        // Seed first time defaults
+        initializeDatabaseState();
 
-      // Clear session safety
-      authenticateSessionCheck();
-
-      // Supabase initial verification
-      checkSupabaseStatus();
-      updateSupabaseStats();
-
-      // Mobile toggles listener
-      document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
-        toggleMobileSidebar(true);
-      });
-      document.getElementById('sidebar-close-btn')?.addEventListener('click', () => {
-        toggleMobileSidebar(false);
-      });
-      document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
-        toggleMobileSidebar(false);
-      });
-
-      // Login trigger submit interceptor
-      document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const user = document.getElementById('login-username').value.trim();
-        const pass = document.getElementById('login-password').value.trim();
-
-        // Load correct active credential check
-        const creds = JSON.parse(localStorage.getItem('adminCredentials') || '{"username":"admin","password":"admin1"}');
-
-        if (user === creds.username && pass === creds.password) {
-          localStorage.setItem('adminSession', 'true');
-          triggerToast("লগইন সফল হয়েছে! ড্যাশবোর্ডে প্রবেশাধিকার প্রদান করা হয়েছে।", "success");
-          authenticateSessionCheck();
-        } else {
-          triggerToast("ভুল এডমিন ইউজারনেম বা সিকিউরিটি পাসওয়ার্ড প্রবেশ করেছেন!", "danger");
-        }
-      });
-
-      // Logout trigger click listener
-      document.getElementById('logout-btn').addEventListener('click', () => {
-        localStorage.removeItem('adminSession');
-        triggerToast("অ্যাডমিন প্যানেল সেশন থেকে লগআউট করা হয়েছে।", "danger");
+        // Clear session safety
         authenticateSessionCheck();
-      });
 
-      // Navigation routing hooks
-      const tabs = document.querySelectorAll('.sidebar-tab');
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          const target = tab.getAttribute('data-tab');
-          switchTab(target);
+        // Supabase initial verification
+        try {
+          checkSupabaseStatus();
+          updateSupabaseStats();
+        } catch (sbErr) {
+          console.error("Supabase init error:", sbErr);
+        }
+
+        // Mobile toggles listener
+        document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+          toggleMobileSidebar(true);
         });
-      });
+        document.getElementById('sidebar-close-btn')?.addEventListener('click', () => {
+          toggleMobileSidebar(false);
+        });
+        document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+          toggleMobileSidebar(false);
+        });
 
+        // Login trigger submit interceptor
+        document.getElementById('login-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const user = document.getElementById('login-username')?.value?.trim();
+          const pass = document.getElementById('login-password')?.value?.trim();
+
+          // Load correct active credential check
+          let creds = { username: "admin", password: "admin1" };
+          try {
+            creds = JSON.parse(localStorage.getItem('adminCredentials') || '{"username":"admin","password":"admin1"}');
+          } catch (e) {}
+
+          if (user === creds.username && pass === creds.password) {
+            localStorage.setItem('adminSession', 'true');
+            triggerToast("লগইন সফল হয়েছে! ড্যাশবোর্ডে প্রবেশাধিকার প্রদান করা হয়েছে।", "success");
+            authenticateSessionCheck();
+          } else {
+            triggerToast("ভুল এডমিন ইউজারনেম বা সিকিউরিটি পাসওয়ার্ড প্রবেশ করেছেন!", "danger");
+          }
+        });
+
+        // Logout trigger click listener
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+          localStorage.removeItem('adminSession');
+          triggerToast("অ্যাডমিন প্যানেল সেশন থেকে লগআউট করা হয়েছে।", "danger");
+          authenticateSessionCheck();
+        });
+
+        // Navigation routing hooks
+        const tabs = document.querySelectorAll('.sidebar-tab');
+        tabs.forEach(tab => {
+          tab?.addEventListener('click', () => {
+            const target = tab.getAttribute('data-tab');
+            if (target) switchTab(target);
+          });
+        });
+      } catch (err) {
+        console.error("Critical error in startAdminApplication:", err);
+      }
     }
 
     if (document.readyState === 'loading') {
