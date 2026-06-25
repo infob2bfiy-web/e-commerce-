@@ -1365,7 +1365,9 @@ create policy "Enable update for everyone" on public.orders for update using (tr
   <!-- MODULE SCRIPT CONTROL CENTRE AND DATABASE LINK OPERATIONS               -->
   <!-- ========================================================================= -->
   <script type="module">
+    console.log("--- Admin Panel Script Execution Started ---");
     import { getSupabaseConfig, testSupabaseConnection, syncLocalOrdersToSupabase } from '../src/supabase.js';
+    console.log("--- Imports from supabase.js loaded successfully ---");
 
     // Safe initialization with local fallback structures
     const BANGLADESH_DISTRICTS = [
@@ -1534,14 +1536,18 @@ create policy "Enable update for everyone" on public.orders for update using (tr
       const statusSession = localStorage.getItem('adminSession');
       const loginOverlay = document.getElementById('login-screen');
       const workspacePanel = document.getElementById('admin-workspace');
+      console.log("authenticateSessionCheck statusSession:", statusSession);
+      console.log("loginOverlay found:", !!loginOverlay, "workspacePanel found:", !!workspacePanel);
       
       if (statusSession === "true") {
-        loginOverlay.classList.add('hidden');
-        workspacePanel.classList.remove('hidden');
+        console.log("Session verified, showing workspace");
+        loginOverlay?.classList.add('hidden');
+        workspacePanel?.classList.remove('hidden');
         renderActiveDashboardMetrics();
       } else {
-        loginOverlay.classList.remove('hidden');
-        workspacePanel.classList.add('hidden');
+        console.log("No active session, showing loginOverlay");
+        loginOverlay?.classList.remove('hidden');
+        workspacePanel?.classList.add('hidden');
       }
     }
 
@@ -3147,11 +3153,14 @@ Grand Total Payable Amount: ৳${activeOrderDetailObj.totalPrice}
     // ==========================================
 
     function startAdminApplication() {
+      console.log("startAdminApplication called");
       try {
         // Seed first time defaults
+        console.log("Initializing database state...");
         initializeDatabaseState();
 
         // Clear session safety
+        console.log("Checking authenticated session...");
         authenticateSessionCheck();
 
         // Supabase initial verification
